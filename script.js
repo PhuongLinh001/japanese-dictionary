@@ -16,9 +16,17 @@ function search() {
 
   if (currentTab === "grammar") {
     searchGrammar(keyword);
-  } else {
-    searchJisho(keyword);
+    return;
   }
+
+  // kanji tab → dùng kanji api
+  if (currentTab === "kanji") {
+    searchKanji(keyword);
+    return;
+  }
+
+  // vocab tab → dùng word api
+  searchJisho(keyword);
 }
 
 // ===== JISHO SEARCH =====
@@ -44,7 +52,8 @@ async function searchJisho(keyword) {
     }
 
     result.innerHTML = data.slice(0, 5).map(item => {
-      const v = item.variants[0];
+      const v = item.variants?.[0];
+      if (!v) return "";
       const word = v.written || v.pronounced;
       const reading = v.pronounced;
       const meanings = item.meanings
@@ -77,21 +86,36 @@ function searchGrammar(keyword) {
 // ===== KANJI SEARCH =====
 async function searchKanji(kanji) {
   const result = document.getElementById("result");
+  if (kanji.length !== 1) {
+  result.innerHTML = "⚠️ Vui lòng nhập 1 chữ Kanji";
+  return;
+}
   result.innerHTML = "⏳ Đang tra Hán tự...";
 
-  const res = await fetch(
-    `https://billowing-heart-f22ajisho-proxy.zaharamikoo.workers.dev/?keyword=${kanji}`
-  );
-  const data = await res.json();
+  try {
+    const res = await fetch(
+      `https://kanjiapi.dev/v1/kanji/${encodeURIComponent(kanji)}`
+    );
 
-  const item = data.data[0];
+    if (!res.ok) {
+      result.innerHTML = "❌ Không tìm thấy Hán tự";
+      return;
+    }
 
-  result.innerHTML = `
-    <h2>${kanji}</h2>
-    <p>📖 Cách đọc: ${item.japanese[0].reading}</p>
-    <p>📘 Nghĩa: ${item.senses[0].english_definitions.join(", ")}</p>
-    <button onclick="speak('${item.japanese[0].reading}')">🔊 Nghe</button>
-  `;
+    const data = await res.json();
+
+    result.innerHTML = `
+      <h2>${data.kanji}</h2>
+      <p><b>Onyomi:</b> ${data.on_readings.join(", ")}</p>
+      <p><b>Kunyomi:</b> ${data.kun_readings.join(", ")}</p>
+      <p><b>Nghĩa:</b> ${data.meanings.join(", ")}</p>
+      <p><b>Số nét:</b> ${data.stroke_count}</p>
+      <button onclick="speak('${data.kanji}')">🔊</button>
+    `;
+  } catch (e) {
+    console.error(e);
+    result.innerHTML = "⚠️ Lỗi mạng";
+  }
 }
 
 // ===== SPEAK =====
@@ -126,5 +150,6 @@ function showSaved() {
     </div>
   `).join("");
 }
+
 
 
