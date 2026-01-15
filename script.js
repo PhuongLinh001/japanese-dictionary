@@ -3,12 +3,10 @@ async function searchJisho(keyword) {
   result.innerHTML = "⏳ Đang tra...";
 
   try {
-    const url =
-      "https://thingproxy.freeboard.io/fetch/" +
-      "https://jisho.org/api/v1/search/words?keyword=" +
-      encodeURIComponent(keyword);
+    const res = await fetch(
+      `https://billowing-heart-f22ajisho-proxy.zaharamikoo.workers.dev/?keyword=${encodeURIComponent(keyword)}`
+    );
 
-    const res = await fetch(url);
     const data = await res.json();
 
     if (!data.data || data.data.length === 0) {
