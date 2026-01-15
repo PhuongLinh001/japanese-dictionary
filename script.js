@@ -26,34 +26,46 @@ async function searchJisho(keyword) {
   const result = document.getElementById("result");
   result.innerHTML = "⏳ Đang tra...";
 
-  const res = await fetch(
-    `https://billowing-heart-f22ajisho-proxy.zaharamikoo.workers.dev/?keyword=${encodeURIComponent(keyword)}`
-  );
-  const data = await res.json();
+  try {
+    const res = await fetch(
+      `https://kanjiapi.dev/v1/words/${encodeURIComponent(keyword)}`
+    );
 
-  if (!data.data || data.data.length === 0) {
-    result.innerHTML = "❌ Không tìm thấy";
-    return;
+    if (!res.ok) {
+      result.innerHTML = "❌ Không tìm thấy";
+      return;
+    }
+
+    const data = await res.json();
+
+    if (!data || data.length === 0) {
+      result.innerHTML = "❌ Không tìm thấy";
+      return;
+    }
+
+    result.innerHTML = data.slice(0, 5).map(item => {
+      const v = item.variants[0];
+      const word = v.written || v.pronounced;
+      const reading = v.pronounced;
+      const meanings = item.meanings
+        .map(m => m.glosses.join(", "))
+        .join("; ");
+
+      return `
+        <div class="card">
+          <h3>${word}</h3>
+          <p>📖 ${reading}</p>
+          <p>➡️ ${meanings}</p>
+          <button onclick="speak('${reading}')">🔊</button>
+          <button onclick="saveWord('${word}','${reading}','${meanings}')">⭐</button>
+        </div>
+      `;
+    }).join("");
+
+  } catch (e) {
+    console.error(e);
+    result.innerHTML = "⚠️ Lỗi mạng";
   }
-
-  const results = data.data.slice(0, 5);
-
-  result.innerHTML = results.map(item => {
-    const jp = item.japanese[0];
-    const word = jp.word || jp.reading;
-    const reading = jp.reading;
-    const meaning = item.senses[0].english_definitions.join(", ");
-
-    return `
-      <div class="card">
-        <h3>${word}</h3>
-        <p>📖 ${reading}</p>
-        <p>➡️ ${meaning}</p>
-        <button onclick="speak('${reading}')">🔊</button>
-        <button onclick="saveWord('${word}','${reading}','${meaning}')">⭐</button>
-      </div>
-    `;
-  }).join("");
 }
 
 // ===== GRAMMAR DEMO =====
@@ -114,4 +126,5 @@ function showSaved() {
     </div>
   `).join("");
 }
+
 
