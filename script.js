@@ -1,13 +1,15 @@
-// tab hiện tại
+console.log("script.js loaded");
+
+// ===== TAB STATE =====
 let currentTab = "vocab";
 
-// đổi tab
+// ===== TAB SWITCH =====
 function setTab(tab) {
   currentTab = tab;
   document.getElementById("result").innerHTML = "";
 }
 
-// khi bấm nút Tra
+// ===== SEARCH BUTTON =====
 function search() {
   const keyword = document.getElementById("searchInput").value.trim();
   if (!keyword) return;
@@ -19,7 +21,7 @@ function search() {
   }
 }
 
-// ===== TRA TỪ / HÁN TỰ =====
+// ===== JISHO SEARCH =====
 async function searchJisho(keyword) {
   const result = document.getElementById("result");
   result.innerHTML = "⏳ Đang tra...";
@@ -47,36 +49,13 @@ async function searchJisho(keyword) {
       <p><b>Nghĩa:</b> ${meaning}</p>
     `;
   } catch (e) {
-    result.innerHTML = "⚠️ Lỗi gọi API";
     console.error(e);
+    result.innerHTML = "⚠️ Lỗi gọi API";
   }
 }
 
-// ===== TRA NGỮ PHÁP (DEMO) =====
+// ===== GRAMMAR DEMO =====
 function searchGrammar(keyword) {
-  const grammarDB = [
-    {
-      pattern: "〜ている",
-      meaning: "Diễn tả hành động đang diễn ra",
-      example: "日本語を勉強している。"
-    },
-    {
-      pattern: "〜ないでください",
-      meaning: "Xin đừng làm gì",
-      example: "ここでタバコを吸わないでください。"
-    }
-  ];
-
-  const found = grammarDB.find(g => g.pattern.includes(keyword));
-
-  if (!found) {
-    document.getElementById("result").innerHTML = "❌ Không tìm thấy ngữ pháp";
-    return;
-  }
-
-  document.getElementById("result").innerHTML = `
-    <h2>${found.pattern}</h2>
-    <p><b>Ý nghĩa:</b> ${found.meaning}</p>
-    <p><b>Ví dụ:</b> ${found.example}</p>
-  `;
+  document.getElementById("result").innerHTML =
+    "📘 Ngữ pháp demo – chưa triển khai";
 }
