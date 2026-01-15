@@ -1,33 +1,30 @@
-body {
-  font-family: Arial, sans-serif;
-  max-width: 800px;
-  margin: auto;
-  padding: 20px;
-}
+async function searchJisho(keyword) {
+  document.getElementById("result").innerHTML = "⏳ Đang tra...";
 
-h1 {
-  text-align: center;
-}
+  try {
+    const res = await fetch(
+      `https://api.allorigins.win/raw?url=https://jisho.org/api/v1/search/words?keyword=${encodeURIComponent(keyword)}`
+    );
 
-.tabs {
-  margin-bottom: 10px;
-}
+    const data = await res.json();
 
-button {
-  padding: 6px 12px;
-  margin: 4px;
-  cursor: pointer;
-}
+    if (!data.data || data.data.length === 0) {
+      document.getElementById("result").innerHTML = "❌ Không tìm thấy";
+      return;
+    }
 
-#searchInput {
-  width: 70%;
-  padding: 8px;
-}
+    const item = data.data[0];
+    const word = item.japanese[0].word || item.japanese[0].reading;
+    const reading = item.japanese[0].reading;
+    const meaning = item.senses[0].english_definitions.join(", ");
 
-#result {
-  margin-top: 20px;
-  background: #f7f7f7;
-  padding: 15px;
-  border-radius: 8px;
+    document.getElementById("result").innerHTML = `
+      <h2>${word}</h2>
+      <p><b>Cách đọc:</b> ${reading}</p>
+      <p><b>Nghĩa:</b> ${meaning}</p>
+    `;
+  } catch (err) {
+    document.getElementById("result").innerHTML = "⚠️ Lỗi API";
+    console.error(err);
+  }
 }
-
