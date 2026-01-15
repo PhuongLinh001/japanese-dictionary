@@ -1,0 +1,33 @@
+body {
+  font-family: Arial, sans-serif;
+  max-width: 800px;
+  margin: auto;
+  padding: 20px;
+}
+
+h1 {
+  text-align: center;
+}
+
+.tabs {
+  margin-bottom: 10px;
+}
+
+button {
+  padding: 6px 12px;
+  margin: 4px;
+  cursor: pointer;
+}
+
+#searchInput {
+  width: 70%;
+  padding: 8px;
+}
+
+#result {
+  margin-top: 20px;
+  background: #f7f7f7;
+  padding: 15px;
+  border-radius: 8px;
+}
+

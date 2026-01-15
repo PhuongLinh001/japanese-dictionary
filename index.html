@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Từ điển tiếng Nhật nhanh</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <h1>📖 Từ điển tiếng Nhật</h1>
+
+  <div class="tabs">
+    <button onclick="setTab('vocab')">Từ vựng</button>
+    <button onclick="setTab('kanji')">Hán tự</button>
+    <button onclick="setTab('grammar')">Ngữ pháp</button>
+  </div>
+
+  <input id="searchInput" placeholder="Nhập từ tiếng Nhật..." />
+  <button onclick="search()">Tra</button>
+
+  <div id="result"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
